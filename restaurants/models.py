@@ -52,9 +52,9 @@ class Restaurant(models.Model):
     def open_past_midnight(self):
         return self.closing_time < self.opening_time
 
-    def reservation_closing_time(self):
-        reservation_close_hour = (self.closing_time.hour - 1 + 24) % 24
-        return datetime.time(hour=reservation_close_hour, minute=self.closing_time.minute)
+    # def reservation_closing_time(self):
+    #     reservation_close_hour = (self.closing_time.hour - 1 + 24) % 24
+    #     return datetime.time(hour=reservation_close_hour, minute=self.closing_time.minute)
 
     # def reservations_past_midnight(self):
     #     return self.reservation_closing_time() < self.opening_time

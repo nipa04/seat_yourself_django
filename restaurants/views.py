@@ -27,9 +27,8 @@ def restaurant_edit(request, id):
     restaurant = Restaurant.objects.get(pk=id)
     owner = restaurant.owner
 
-    if request.user is not owner:
+    if request.user.pk is not owner.pk:
         return HttpResponseRedirect('/restaurants')
-
 
     if request.method == 'POST':
         form = RestaurantForm(request.POST, instance=restaurant)
