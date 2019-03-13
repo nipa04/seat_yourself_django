@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Sum
+import datetime
 
 class Profile(models.Model):
     first_name = models.CharField(max_length=255)
@@ -51,6 +52,13 @@ class Restaurant(models.Model):
     def open_past_midnight(self):
         return self.closing_time < self.opening_time
 
+    def reservation_closing_time(self):
+        reservation_close_hour = (self.closing_time.hour - 1 + 24) % 24
+        return datetime.time(hour=reservation_close_hour, minute=self.closing_time.minute)
+
+    # def reservations_past_midnight(self):
+    #     return self.reservation_closing_time() < self.opening_time
+
     def room_for(self, date, time, number_of_people):
         reserved_seats = self.reservations.filter(date=date, time=time).aggregate(Sum('party_size'))
         reserved_seats = reserved_seats['party_size__sum'] or 0
@@ -72,4 +80,3 @@ class Reservation(models.Model):
         date = self.date.strftime("%Y-%m-%d")
         time = self.time.strftime("%H:%M")
         return "{} {}".format(date, time)
-

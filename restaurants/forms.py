@@ -1,4 +1,5 @@
 import datetime as dt
+from datetime import datetime,date,time
 from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.forms import (CharField, DateField, DateInput,
@@ -22,12 +23,27 @@ class ReservationForm(ModelForm):
         closing = restaurant.closing_time
         opening = restaurant.opening_time
 
+        reservation_closing = restaurant.reservation_closing_time()
         if restaurant.open_past_midnight():
             if closing < cleaned_time and cleaned_time < opening:
                 self.add_error('time', 'Restaurant not open at that time')
+            elif reservation_closing < closing_time and clean_time < closing_time and clean_time > reservation_closing:
+                self.add_error('time', 'Reservations must be made an hour before closing')
+            elif reservation_closing > closing_time and cleaned_time > reservation_closing:
+                self.add_error('time', 'Reservations must be made an hour before closing')
         else:
             if cleaned_time < opening or closing < cleaned_time:
                 self.add_error('time', 'Restaurant not open at that time')
+            elif clean_time > reservation_closing:
+                self.add_error('time', 'Reservations must be made an hour before closing')
+
+        # reservation_closing = restaurant.reservation_closing_time()
+        # if restaurant.reservations_past_midnight():
+        #     if reservation_closing < cleaned_time and cleaned_time < opening:
+        #         self.add_error('time', 'Reservations must be made an hour before closing')
+        # else:
+        #     if cleaned_time < opening or reservation_closing < cleaned_time:
+        #         self.add_error('time', 'Reservations must be made an hour before closing')
 
         return cleaned_time
 
@@ -54,9 +70,11 @@ class ReservationForm(ModelForm):
         cleaned_date = cleaned_data['date']
         cleaned_party_size = cleaned_data['party_size']
         restaurant = self.instance.restaurant
+
         reservation_datetime = datetime(cleaned_date.year, cleaned_date.month, cleaned_date.day, cleaned_time.hour, cleaned_time.minute)
         if reservation_datetime < (datetime.now() + timedelta(minutes=30)):
             self.add_error('time', 'Reservation must be at least 30 minutes in future')
+
 
         if not restaurant.room_for(cleaned_date, cleaned_time, cleaned_party_size):
             self.add_error('time', 'Restaurant is booked at that time')
