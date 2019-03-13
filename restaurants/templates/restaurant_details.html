@@ -13,6 +13,12 @@
     <h4>{{restaurant.description}}</h4>
     <img src="{{restaurant.image}}" alt="Image">
 
+    {% for restaurant in others %}
+    <ul>
+      <li>{{ restaurant.name }}</li>
+    </ul>
+    {% endfor %}
+
     {% if user.is_authenticated %}
       {% if restaurant.owner == user %}
       <p> <a href="{% url 'restaurant_edit' id=restaurant.pk %}">Edit restaurant details</a> </p>
@@ -52,5 +58,6 @@
         <input type="submit" value="Place reservation">
       </form>
     {% endif %}
+
 </main>
 {% endblock %}

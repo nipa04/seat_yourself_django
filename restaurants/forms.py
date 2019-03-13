@@ -27,14 +27,14 @@ class ReservationForm(ModelForm):
         if restaurant.open_past_midnight():
             if closing < cleaned_time and cleaned_time < opening:
                 self.add_error('time', 'Restaurant not open at that time')
-            elif reservation_closing < closing_time and clean_time < closing_time and clean_time > reservation_closing:
+            elif reservation_closing < closing_time and cleaned_time < closing_time and cleaned_time > reservation_closing:
                 self.add_error('time', 'Reservations must be made an hour before closing')
-            elif reservation_closing > closing_time and cleaned_time > reservation_closing:
+            elif reservation_closing > closing_time and (cleaned_time > reservation_closing or cleaned_time < closing_time):
                 self.add_error('time', 'Reservations must be made an hour before closing')
         else:
             if cleaned_time < opening or closing < cleaned_time:
                 self.add_error('time', 'Restaurant not open at that time')
-            elif clean_time > reservation_closing:
+            elif cleaned_time > reservation_closing:
                 self.add_error('time', 'Reservations must be made an hour before closing')
 
         # reservation_closing = restaurant.reservation_closing_time()
