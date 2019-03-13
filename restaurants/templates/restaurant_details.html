@@ -33,7 +33,7 @@
         {% endif %}
       {% endif %}
 
-      {% if reservations %}
+      <!-- {% if reservations %}
       <ol>
         {% for reservation in reservations %}
         <li>
@@ -45,7 +45,7 @@
         </li>
         {% endfor %}
       </ol>
-      {% endif %}
+      {% endif %} -->
       <form method='POST' action="{% url 'reservation_create' restaurant_id=restaurant.pk%}">
         {% csrf_token %}
         {{ reservation_form.as_p }}
